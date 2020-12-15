@@ -28,6 +28,7 @@ if (api.query === '') {
       text: 'Enter the value!',
       delay: 2000,
     });
+    refs.btn.classList.remove('is-hidden');
   }
 
 
@@ -38,7 +39,7 @@ if (api.query === '') {
   updateMarkup (hits);
   refs.btn.classList.remove('is-hidden');
   window.scrollTo ({
-    top: document.documentElement.offsetHeight,
+    top: 1000,
     behavior: 'smooth',
   })
  });
@@ -52,6 +53,10 @@ function updateMarkup (hits) {
 refs.btn.addEventListener('click', () => {
   api.fearchHits().then(hits => {
     updateMarkup (hits);
+    window.scrollTo ({
+      top: document.documentElement.offsetHeight,
+      behavior: 'smooth',
+    })
   })
 })
 
