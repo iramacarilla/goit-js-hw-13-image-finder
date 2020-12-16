@@ -16,6 +16,13 @@ const refs = {
   btn: document.querySelector('[data-action="show-more"]'),
 }
 
+function errors (action ,text) {
+  action({
+    text,
+    delay: 2000,
+  })
+}
+
 refs.search.addEventListener('submit', event => {
   event.preventDefault();
   const searchQ = event.currentTarget;
@@ -23,40 +30,41 @@ refs.search.addEventListener('submit', event => {
   refs.gallery.innerHTML = '';
   searchQ.reset();
 
-if (api.query === '') {
-    return info({
-      text: 'Enter the value!',
-      delay: 2000,
-    });
+  if (api.query === '') {
+    return errors (info, 'Enter the value!');
     refs.btn.classList.remove('is-hidden');
   }
 
-
- api.resetPage();
- refs.btn.classList.add('is-hidden');
-
- api.fearchHits().then(hits => {
-  updateMarkup (hits);
-  refs.btn.classList.remove('is-hidden');
-  window.scrollTo ({
-    top: 1000,
-    behavior: 'smooth',
+  api.resetPage();
+  refs.btn.classList.add('is-hidden');
+  api.fetchHits().then(hits => {
+    if (hits.length === 0) {
+      return  errors (error, 'No matches or invalid input!');
+    }
+    updateMarkup (hits);
+    refs.btn.classList.remove('is-hidden');
+    window.scrollTo ({
+      top: 1000,
+      behavior: 'smooth',
+   })
   })
- });
 })
+
+
 
 function updateMarkup (hits) {
   const markup = template(hits);
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
 
-refs.btn.addEventListener('click', () => {
-  api.fearchHits().then(hits => {
+refs.btn.addEventListener('click',  () => {
+  api.fetchHits().then(hits => {
     updateMarkup (hits);
     window.scrollTo ({
-      top: document.documentElement.offsetHeight,
+     top: document.documentElement.offsetHeight,
       behavior: 'smooth',
     })
+
   })
 })
 
